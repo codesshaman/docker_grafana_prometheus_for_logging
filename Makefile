@@ -1,4 +1,4 @@
-name = Dash
+name = Grafana Logging
 
 NO_COLOR=\033[0m	# Color Reset
 COLOR_OFF='\e[0m'       # Color Off
@@ -17,66 +17,60 @@ USER_ID = $(shell id -u)
 
 all:
 	@printf "Launch configuration ${name}...\n"
-	@if [ -d app/.venv ]; then \
-		echo "Remove python environment first!"; \
-	else \
-		docker-compose -f ./docker-compose.yml up -d; \
-	fi
+	@docker-compose -f ./docker-compose.yml up -d
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build grafana
 
 help:
 	@echo -e "$(OK_COLOR)==== All commands of ${name} configuration ====$(NO_COLOR)"
 	@echo -e "$(WARN_COLOR)- make				: Launch configuration"
 	@echo -e "$(WARN_COLOR)- make build			: Building configuration"
-	@echo -e "$(WARN_COLOR)- make conel			: Connect to elastic container"
-	@echo -e "$(WARN_COLOR)- make conki			: Connect to kibana container"
-	@echo -e "$(WARN_COLOR)- make conls			: Connect to logstash container"
-	@echo -e "$(WARN_COLOR)- make conds			: Connect to dash container"
-	@echo -e "$(WARN_COLOR)- make conpa			: Connect to pgadmin container"
-	@echo -e "$(WARN_COLOR)- make conps			: Connect to postgres container"
+	@echo -e "$(WARN_COLOR)- make congra			: Connect to grafana container"
+	@echo -e "$(WARN_COLOR)- make conki			: Connect to loki container"
+	@echo -e "$(WARN_COLOR)- make conpro			: Connect to prometheus container"
+	@echo -e "$(WARN_COLOR)- make conpt			: Connect to promtail container"
+	@echo -e "$(WARN_COLOR)- make conpg			: Connect to pushgateway container"
+	@echo -e "$(WARN_COLOR)- make conpos			: Connect to postgres container"
 	@echo -e "$(WARN_COLOR)- make down			: Stopping configuration"
 	@echo -e "$(WARN_COLOR)- make env			: Create .env-file"
 	@echo -e "$(WARN_COLOR)- make push			: Push changes to the github"
-	@echo -e "$(WARN_COLOR)- make re			: Rebuild configuration"
-	@echo -e "$(WARN_COLOR)- make reds			: Rebuild dash configuration"
-	@echo -e "$(WARN_COLOR)- make repa			: Rebuild pgadmin configuration"
-	@echo -e "$(WARN_COLOR)- make reps			: Rebuild postgres configuration"
-	@echo -e "$(WARN_COLOR)- make reel			: Rebuild elasticsearch configuration"
-	@echo -e "$(WARN_COLOR)- make rels			: Rebuild logstash configuration"
-	@echo -e "$(WARN_COLOR)- make reki			: Rebuild kibana configuration"
+	@echo -e "$(WARN_COLOR)- make re			: Rebuild all configuration"
+	@echo -e "$(WARN_COLOR)- make regra			: Rebuild grafana configuration"
+	@echo -e "$(WARN_COLOR)- make relo			: Rebuild loki configuration"
+	@echo -e "$(WARN_COLOR)- make repro			: Rebuild prometheus configuration"
+	@echo -e "$(WARN_COLOR)- make rept			: Rebuild promtail configuration"
+	@echo -e "$(WARN_COLOR)- make repg			: Rebuild pushgateway configuration"
+	@echo -e "$(WARN_COLOR)- make repos			: Rebuild postgres configuration"
 	@echo -e "$(WARN_COLOR)- make ps			: View configuration"
 	@echo -e "$(WARN_COLOR)- make clean			: Cleaning configuration$(NO_COLOR)"
 
 build:
 	@printf "$(YELLOW)==== Building configuration ${name}... ====$(NO_COLOR)\n"
-	@if [ -d app/.venv ]; then \
-		echo "Remove python environment first!"; \
-	else \
-		docker-compose -f ./docker-compose.yml up -d --build; \
-	fi
+	@docker-compose -f ./docker-compose.yml up -d --build
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build grafana
 
-conel:
-	@printf "$(ERROR_COLOR)==== Connect to Elastic container... ====$(NO_COLOR)\n"
-	@docker exec -it elasticsearch bash
+congra:
+	@printf "$(ERROR_COLOR)==== Connect to grafana container... ====$(NO_COLOR)\n"
+	@docker exec -it grafana sh
 
 conki:
-	@printf "$(ERROR_COLOR)==== Connect to Kibana container... ====$(NO_COLOR)\n"
-	@docker exec -it kibana bash
+	@printf "$(ERROR_COLOR)==== Connect to loki container... ====$(NO_COLOR)\n"
+	@docker exec -it loki sh
 
-conls:
-	@printf "$(ERROR_COLOR)==== Connect to Logstash container... ====$(NO_COLOR)\n"
-	@docker exec -it --user logstash logstash bash
+conpro:
+	@printf "$(ERROR_COLOR)==== Connect to prometheus container... ====$(NO_COLOR)\n"
+	@docker exec -it prometheus sh
 
-conds:
-	@printf "$(ERROR_COLOR)==== Connect to Elastic container... ====$(NO_COLOR)\n"
-	@docker exec -it dash bash
+conpt:
+	@printf "$(ERROR_COLOR)==== Connect to promtail container... ====$(NO_COLOR)\n"
+	@docker exec -it promtail bash
 
-conps:
-	@printf "$(ERROR_COLOR)==== Connect to Kibana container... ====$(NO_COLOR)\n"
+conpg:
+	@printf "$(ERROR_COLOR)==== Connect to pushgateway container... ====$(NO_COLOR)\n"
+	@docker exec -it pushgateway sh
+
+conpos:
+	@printf "$(ERROR_COLOR)==== Connect to postgres container... ====$(NO_COLOR)\n"
 	@docker exec -it postgres sh
-
-conpa:
-	@printf "$(ERROR_COLOR)==== Connect to Logstash container... ====$(NO_COLOR)\n"
-	@docker exec -it pgadmin4 bash
 
 down:
 	@printf "$(ERROR_COLOR)==== Stopping configuration ${name}... ====$(NO_COLOR)\n"
@@ -99,35 +93,32 @@ push:
 
 re: down
 	@printf "$(OK_COLOR)==== Rebuild configuration ${name}... ====$(NO_COLOR)\n"
-	@if [ -d app/.venv ]; then \
-		echo "Remove python environment first!"; \
-	else \
-		docker-compose -f ./docker-compose.yml up -d --no-deps --build; \
-	fi
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build grafana
 
-reds:
-	@printf "$(OK_COLOR)==== Rebuild postgres... ====$(NO_COLOR)\n"
-	@docker-compose -f ./docker-compose.yml up -d --no-deps --build dash
+regra:
+	@printf "$(OK_COLOR)==== Rebuild grafana... ====$(NO_COLOR)\n"
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build grafana
 
-reps:
+relo:
+	@printf "$(OK_COLOR)==== Rebuild loki... ====$(NO_COLOR)\n"
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build loki
+
+repro:
+	@printf "$(OK_COLOR)==== Rebuild prometheus... ====$(NO_COLOR)\n"
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build prometheus
+
+rept:
+	@printf "$(OK_COLOR)==== Rebuild promtail... ====$(NO_COLOR)\n"
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build promtail
+
+repg:
+	@printf "$(OK_COLOR)==== Rebuild pushgateway... ====$(NO_COLOR)\n"
+	@docker-compose -f ./docker-compose.yml up -d --no-deps --build pushgateway
+
+repos:
 	@printf "$(OK_COLOR)==== Rebuild postgres... ====$(NO_COLOR)\n"
 	@docker-compose -f ./docker-compose.yml up -d --no-deps --build postgres
-
-repa:
-	@printf "$(OK_COLOR)==== Rebuild pgadmin... ====$(NO_COLOR)\n"
-	@docker-compose -f ./docker-compose.yml up -d --no-deps --build pgadmin
-
-reel:
-	@printf "$(OK_COLOR)==== Rebuild postgres... ====$(NO_COLOR)\n"
-	@docker-compose -f ./docker-compose.yml up -d --no-deps --build elasticsearch
-
-reki:
-	@printf "$(OK_COLOR)==== Rebuild postgres... ====$(NO_COLOR)\n"
-	@docker-compose -f ./docker-compose.yml up -d --no-deps --build kibana
-
-rels:
-	@printf "$(OK_COLOR)==== Rebuild pgadmin... ====$(NO_COLOR)\n"
-	@docker-compose -f ./docker-compose.yml up -d --no-deps --build logstash
 
 ps:
 	@printf "$(BLUE)==== View configuration ${name}... ====$(NO_COLOR)\n"
