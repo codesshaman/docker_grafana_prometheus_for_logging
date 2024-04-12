@@ -31,6 +31,7 @@ services:
     # Uncomment for using docker secrets 
     #secrets:
     #  - grafana_database_password
+    restart: unless-stopped
     deploy:
       mode: replicated
       replicas: 1
@@ -49,6 +50,7 @@ services:
       - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
       - ./config/web-config.yaml:/etc/prometheus/web-config.yaml:ro
       - ./grafana/prometheus-data:/prometheus
+    restart: unless-stopped
     user: "root"
     # Uncomment for using docker secrets
     #secrets:
@@ -58,6 +60,7 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yaml"
       - "--web.config.file=/etc/prometheus/web-config.yaml"
       - "--storage.tsdb.retention.time=7d"
+    restart: unless-stopped
     deploy:
       mode: replicated
       replicas: 1
@@ -76,6 +79,7 @@ services:
       - ./config/web-config.yaml:/etc/prometheus/web-config.yaml:ro
     command:
       - "--web.config.file=/etc/prometheus/web-config.yaml"
+    restart: unless-stopped
     deploy:
       mode: replicated
       replicas: 1
@@ -93,6 +97,7 @@ services:
       - ./grafana/loki-data:/loki
     command: 
       - "--config.file=/etc/loki/loki.yaml"
+    restart: unless-stopped
     user: "root"
     deploy:
       mode: replicated
@@ -114,6 +119,7 @@ services:
     command:
       - "--config.file=/etc/promtail/promtail.yaml"
       - "--config.expand-env=true"
+    restart: unless-stopped
     deploy:
       mode: global
       update_config:
