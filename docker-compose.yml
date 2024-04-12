@@ -60,7 +60,6 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yaml"
       - "--web.config.file=/etc/prometheus/web-config.yaml"
       - "--storage.tsdb.retention.time=7d"
-    restart: unless-stopped
     deploy:
       mode: replicated
       replicas: 1
