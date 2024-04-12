@@ -1,2 +1,3 @@
 grafana/*
 config/*
+.env
